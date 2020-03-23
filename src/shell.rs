@@ -72,7 +72,7 @@ pub fn term_handler(hist: &Vec<String>, _path: &String) -> String {
                         }
                         else {
                             hsbuf.push(c);
-                            write!(stdout, "{}", c);
+                            write!(stdout, "{}", c).expect("Error writing to stdout");
                         }
                     }
                 };
@@ -90,7 +90,7 @@ pub fn term_handler(hist: &Vec<String>, _path: &String) -> String {
                     'g' => {
                         // discard current input, enter new line
                         buf = "".to_string();
-                        write!(stdout, "\n");
+                        write!(stdout, "\n").expect("Error writing to stdout");
                         break;
                     }
                     'r' => {
@@ -113,7 +113,7 @@ pub fn term_handler(hist: &Vec<String>, _path: &String) -> String {
                                color::Fg(color::Reset),
                                termion::clear::UntilNewline,
                                term_cursor::Goto(1,y+1),
-                               hsbuf);
+                               hsbuf).expect("Error writing to stdout");
                         hsearch = true;
                     }
                     's' => {
@@ -133,7 +133,7 @@ pub fn term_handler(hist: &Vec<String>, _path: &String) -> String {
                                color::Fg(color::Reset),
                                termion::clear::UntilNewline,
                                term_cursor::Goto(1,y+1),
-                               hsbuf);
+                               hsbuf).expect("Error writing to stdout");
                         hsearch = true;
                     }
                     _ => {}
@@ -142,13 +142,13 @@ pub fn term_handler(hist: &Vec<String>, _path: &String) -> String {
             Key::Left => {
                 if !hsearch && bufindex < buf.len() {
                     bufindex += 1;
-                    write!(stdout, "{}", term_cursor::Left(1)); 
+                    write!(stdout, "{}", term_cursor::Left(1)).expect("Error writing to stdout"); 
                 }
             },
             Key::Right => {
                 if !hsearch && bufindex > 0 {
                     bufindex -= 1;
-                    write!(stdout, "{}", term_cursor::Right(1));
+                    write!(stdout, "{}", term_cursor::Right(1)).expect("Error writing to stdout");
                 }
             },
             Key::Up => {
@@ -160,7 +160,7 @@ pub fn term_handler(hist: &Vec<String>, _path: &String) -> String {
                     buf.clone_from(&hist[hist.len()-hpos]);
                     write!(stdout, "{}{}{}",
                            term_cursor::Goto(x,y),
-                           termion::clear::UntilNewline, buf);
+                           termion::clear::UntilNewline, buf).expect("Error writing to stdout");
                 }
             },
             Key::Down => {
@@ -171,13 +171,13 @@ pub fn term_handler(hist: &Vec<String>, _path: &String) -> String {
                     buf.clone_from(&tbuf);
                     write!(stdout, "{}$ {}{}",
                            term_cursor::Goto(1,y),
-                           termion::clear::UntilNewline, buf);
+                           termion::clear::UntilNewline, buf).expect("Error writing to stdout");
                 }
                 else {
                     buf.clone_from(&hist[hist.len()-hpos]);
                     write!(stdout, "{}$ {}{}",
                            term_cursor::Goto(1,y),
-                           termion::clear::UntilNewline, buf);
+                           termion::clear::UntilNewline, buf).expect("Error writing to stdout");
                 }
             },
             Key::Backspace => {
@@ -194,12 +194,12 @@ pub fn term_handler(hist: &Vec<String>, _path: &String) -> String {
                            term_cursor::Goto(x,y),
                            termion::clear::UntilNewline,
                            buf,
-                           term_cursor::Goto(cx-1,y));
+                           term_cursor::Goto(cx-1,y)).expect("Error writing to stdout");
                 }
                 else if cx > 15 {
                     write!(stdout, "{}{}",
                            term_cursor::Left(1),
-                           termion::clear::UntilNewline);
+                           termion::clear::UntilNewline).expect("Error writing to stdout");
                 }
             },
             Key::Delete => {
@@ -214,7 +214,7 @@ pub fn term_handler(hist: &Vec<String>, _path: &String) -> String {
                            term_cursor::Goto(x,y),
                            termion::clear::UntilNewline,
                            buf,
-                           term_cursor::Goto(cx,y));
+                           term_cursor::Goto(cx,y)).expect("Error writing to stdout");
                     
                 }
             },
@@ -234,7 +234,7 @@ pub fn get_hist(hist: &mut Vec<String>) {
     match f {
         Err(_e) => {},
         _ => {
-            let mut reader = BufReader::new(f.unwrap());
+            let reader = BufReader::new(f.unwrap());
             for line in reader.lines() {
                 hist.push(line.unwrap());
             }
@@ -251,7 +251,7 @@ pub fn write_hist(path: std::path::PathBuf,hist: &mut Vec<String>) {
         .open(path.join(".rhistory"))
         .unwrap();
     for s in hist {
-        write!(file, "{}\n", s);
+        write!(file, "{}\n", s).expect("Error when writing history to file");
     }
 }
 
