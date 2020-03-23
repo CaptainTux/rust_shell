@@ -234,7 +234,7 @@ pub fn get_hist(hist: &mut Vec<String>) {
     match f {
         Err(_e) => {},
         _ => {
-            let mut reader = BufReader::new(f.unwrap());
+            let reader = BufReader::new(f.unwrap());
             for line in reader.lines() {
                 hist.push(line.unwrap());
             }
