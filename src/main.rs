@@ -43,7 +43,7 @@ fn main() {
 
         stdout.flush().unwrap();
 
-        write!(stdout, "{}$ ", term_cursor::Goto(1, y));  // finally a working prompt
+        write!(stdout, "{}$ ", term_cursor::Goto(1, y)).expect("Error writing to stdout");  // finally a working prompt
 
         stdout.flush().unwrap();
 
